@@ -16,7 +16,11 @@ def install_tools():
     tools = {
         "ffuf": "sudo apt-get install -y ffuf",
         "amass": "sudo apt-get install -y amass",
-        "uniscan": "sudo apt-get install -y uniscan"
+        "uniscan": "sudo apt-get install -y uniscan",
+        "nmap": "sudo apt-get install -y nmap",
+        "sqlmap": "sudo apt-get install -y sqlmap",
+        "nikto": "sudo apt-get install -y nikto",
+        "whois": "sudo apt-get install -y whois"
     }
     
     for tool, install_command in tools.items():
@@ -38,7 +42,7 @@ def is_tool_installed(tool_name):
 def main():
     install_tools()
 
-    link = input("T4rget: ")
+    link = input("Target: ")
     
     # Determina il percorso del desktop
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
@@ -51,8 +55,9 @@ def main():
         "sqlmap": ["sqlmap", "--url", link, "--batch"],
         "ffuf": ["ffuf", "-u", f"{link}/FUZZ", "-w", "/usr/share/wordlists/dirb/common.txt"],
         "whois": ["whois", link],
-        "nikto": ["nikto", "-u", link],
-        "uniscan": ["uniscan", "-u", link]
+        "nikto": ["nikto", "-host", link],
+        "uniscan": ["uniscan", "-u", link, "-qweds"],
+        "nmap": ["nmap", "-A", link]
     }
     
     for tool_name, command in tools.items():
