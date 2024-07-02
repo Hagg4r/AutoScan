@@ -6,9 +6,9 @@ def run_command(command):
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return result.stdout, result.stderr
 
-def save_to_file(filename, data):
+def save_to_file(filepath, data):
     """Save data to a file."""
-    with open(filename, 'a') as file:
+    with open(filepath, 'a') as file:
         file.write(data + '\n')
 
 def install_tools():
@@ -40,7 +40,9 @@ def main():
 
     link = input("Inserisci il link da scannerizzare: ")
     
-    output_file = "scan_results.txt"
+    # Determina il percorso del desktop
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    output_file = os.path.join(desktop_path, "scan_results.txt")
     
     # Clear the file if it exists
     open(output_file, 'w').close()
