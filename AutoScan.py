@@ -38,7 +38,7 @@ def is_tool_installed(tool_name):
 def main():
     install_tools()
 
-    link = input("Inserisci il link da scannerizzare: ")
+    link = input("T4rget: ")
     
     # Determina il percorso del desktop
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
@@ -48,10 +48,10 @@ def main():
     open(output_file, 'w').close()
     
     tools = {
-        "sqlmap": ["sqlmap", "-u", link, "--batch"],
+        "sqlmap": ["sqlmap", "--url", link, "--batch"],
         "ffuf": ["ffuf", "-u", f"{link}/FUZZ", "-w", "/usr/share/wordlists/dirb/common.txt"],
         "whois": ["whois", link],
-        "nikto": ["nikto", "-h", link],
+        "nikto": ["nikto", "-u", link],
         "uniscan": ["uniscan", "-u", link]
     }
     
