@@ -39,12 +39,38 @@ def is_tool_installed(tool_name):
     """Check if a tool is installed."""
     return subprocess.call(["which", tool_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
+def clear_screen():
+    """Clear the terminal screen."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def print_header():
+    """Print the header 'hagg4rscan'."""
+    header = """
+     __  __                           __ __           ____                               
+/\ \/\ \                         /\ \\ \         /\  _`\                             
+\ \ \_\ \     __       __      __\ \ \\ \    _ __\ \,\L\_\    ___     __      ___    
+ \ \  _  \  /'__`\   /'_ `\  /'_ `\ \ \\ \_ /\`'__\/_\__ \   /'___\ /'__`\  /' _ `\  
+  \ \ \ \ \/\ \L\.\_/\ \L\ \/\ \L\ \ \__ ,__\ \ \/  /\ \L\ \/\ \__//\ \L\.\_/\ \/\ \ 
+   \ \_\ \_\ \__/.\_\ \____ \ \____ \/_/\_\_/\ \_\  \ `\____\ \____\ \__/.\_\ \_\ \_\
+    \/_/\/_/\/__/\/_/\/___L\ \/___L\ \ \/_/   \/_/   \/_____/\/____/\/__/\/_/\/_/\/_/
+                       /\____/ /\____/                                               
+                       \_/__/  \_/__/                                                
+
+    """
+    print(header)
+
 def main():
     install_tools()
+    
+    # Clear the screen after installing the tools
+    clear_screen()
+
+    # Print the header
+    print_header()
 
     link = input("Target: ")
     
-    # Determina il percorso del desktop
+    # Determine the desktop path
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
     output_file = os.path.join(desktop_path, "scan_results.txt")
     
@@ -59,17 +85,23 @@ def main():
         "uniscan": ["uniscan", "-u", link, "-qweds"],
         "nmap": ["nmap", "-A", link]
     }
+
+    total_tools = len(tools)
     
-    for tool_name, command in tools.items():
-        print(f"Esecuzione di {tool_name}...")
+    for i, (tool_name, command) in enumerate(tools.items(), 1):
+        print(f"Esecuzione di {tool_name} ({i}/{total_tools})...")
         stdout, stderr = run_command(command)
         save_to_file(output_file, f"=== Risultati {tool_name} ===\n")
         if stdout:
             save_to_file(output_file, stdout)
         if stderr:
             save_to_file(output_file, f"Errori:\n{stderr}")
+        
+        # Calculate and print the progress
+        progress = (i / total_tools) * 100
+        print(f"Progresso: {progress:.2f}%")
     
-    # Aggiungi la firma alla fine del file
+    # Add signature at the end of the file
     save_to_file(output_file, "\nby Haggar")
 
 if __name__ == "__main__":
