@@ -80,7 +80,7 @@ def main():
         "whois": ["whois", link],
         "nikto": ["nikto", "-h", link,],
         "uniscan": ["uniscan", "-u", link, "-qd"],
-        "nmap": ["nmap", link]
+        "nmap": ["nmap", link],
     }
 
     total_tools = len(tools)
