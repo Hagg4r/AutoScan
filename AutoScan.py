@@ -46,7 +46,7 @@ def clear_screen():
 def print_header():
     """Print the header 'hagg4rscan'."""
     header = """
-     __  __                       __ __           ____                               
+ __  __                           __ __           ____                               
 /\ \/\ \                         /\ \\ \         /\  _`\                             
 \ \ \_\ \     __       __      __\ \ \\ \    _ __\ \,\L\_\    ___     __      ___    
  \ \  _  \  /'__`\   /'_ `\  /'_ `\ \ \\ \_ /\`'__\/_\__ \   /'___\ /'__`\  /' _ `\  
@@ -81,9 +81,9 @@ def main():
         "sqlmap": ["sqlmap", "--url", link, "--batch"],
         "ffuf": ["ffuf", "-u", f"{link}/FUZZ", "-w", "/usr/share/wordlists/dirb/common.txt"],
         "whois": ["whois", link],
-        "nikto": ["nikto", "-u", link],
-        "uniscan": ["uniscan", "-u", link, "-d"],
-        "nmap": ["nmap", "-v", link]
+        "nikto": ["nikto", "-h", link,],
+        "uniscan": ["uniscan", "-u", link, "-qd"],
+        "nmap": ["nmap", link]
     }
 
     total_tools = len(tools)
@@ -102,7 +102,7 @@ def main():
         print(f"Progresso: {progress:.2f}%")
     
     # Add signature at the end of the file
-    save_to_file(output_file, "\nby Haggar")
+    save_to_file(output_file, "\nby @Haggar")
 
 if __name__ == "__main__":
     main()
