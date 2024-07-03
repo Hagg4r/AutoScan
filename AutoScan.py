@@ -85,7 +85,7 @@ def main():
     open(output_file, 'w').close()
     
     tools = {
-        "sqlmap": ["sqlmap", "--url", link, "--batch"],
+        "sqlmap": ["sqlmap", "--url", link, "--forms --crawl=2"],
         "ffuf": ["ffuf", "-u", f"{link}/FUZZ", "-w", "/usr/share/wordlists/dirb/common.txt"],
         "whois": ["whois", link],
         "nikto": ["nikto", "-h", link,],
