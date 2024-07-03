@@ -14,13 +14,13 @@ def save_to_file(filepath, data):
 def install_tools():
     """Install necessary tools if not already installed."""
     tools = {
-        "ffuf": "sudo apt-get install -y ffuf",
         "amass": "sudo apt-get install -y amass",
         "uniscan": "sudo apt-get install -y uniscan",
         "nmap": "sudo apt-get install -y nmap",
         "sqlmap": "sudo apt-get install -y sqlmap",
         "nikto": "sudo apt-get install -y nikto",
-        "whois": "sudo apt-get install -y whois"
+        "whois": "sudo apt-get install -y whois",
+        "subfinder": "GO111MODULE=on go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
     }
     
     for tool, install_command in tools.items():
@@ -69,16 +69,18 @@ def main():
     
     # Determine the desktop path
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-    output_file = os.path.join(desktop_path, "scan_results.txt")
+    target_dir = os.path.join(desktop_path, link)
+    os.makedirs(target_dir, exist_ok=True)
+    output_file = os.path.join(target_dir, "domain.txt")
     
     # Clear the file if it exists
     open(output_file, 'w').close()
     
     tools = {
-        "sqlmap": ["sqlmap", "--url", link, "--tamper"],
-        "ffuf": ["ffuf", "-u", f"{link}/FUZZ", "-w", "/usr/share/wordlists/dirb/common.txt"],
+        "subfinder": ["subfinder", "-d", link, "-o", output_file],
+        "sqlmap": ["sqlmap", "--url", link],
         "whois": ["whois", link],
-        "nikto": ["nikto", "-h", link,],
+        "nikto": ["nikto", "-h", link],
         "uniscan": ["uniscan", "-u", link, "-qd"],
         "nmap": ["nmap", link],
     }
