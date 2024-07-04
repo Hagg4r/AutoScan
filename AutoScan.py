@@ -20,7 +20,7 @@ def install_tools():
         "sqlmap": "sudo apt-get install -y sqlmap",
         "nikto": "sudo apt-get install -y nikto",
         "whois": "sudo apt-get install -y whois",
-        "subfinder": "GO111MODULE=on go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
+        "subfinder": "sudo apt-get install -y subfinder",
         "proxychains": "sudo apt-get install -y proxychains"
     }
     
