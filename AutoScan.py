@@ -82,7 +82,7 @@ def main():
     open(output_file, 'w').close()
     
     tools = {
-        "subfinder": ["subfinder", "-d", link, "-o", output_file],
+        "subfinder": ["subfinder", , link, output_file],
         "sqlmap": ["sqlmap", "--url", link],
         "whois": ["whois", link],
         "nikto": ["nikto", "-h", link],
