@@ -6,6 +6,11 @@ def run_command(command):
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return result.stdout, result.stderr
 
+def run_sudo_command(command):
+    """Run a command with sudo and return its output."""
+    result = subprocess.run(['sudo'] + command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    return result.stdout, result.stderr
+
 def save_to_file(filepath, data):
     """Save data to a file."""
     with open(filepath, 'a') as file:
@@ -20,7 +25,7 @@ def install_tools():
         "sqlmap": "sudo apt-get install -y sqlmap",
         "nikto": "sudo apt-get install -y nikto",
         "whois": "sudo apt-get install -y whois",
-        "subfinder": "sudo apt-get install -y subfinder",
+        "subfinder": "GO111MODULE=on go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
         "proxychains": "sudo apt-get install -y proxychains"
     }
     
@@ -45,11 +50,17 @@ def configure_proxychains():
     proxychains_conf = "/etc/proxychains.conf"
     tor_proxy = "socks5  127.0.0.1 9050"
     
-    with open(proxychains_conf, 'a') as file:
+    # Append Tor proxy settings to proxychains configuration
+    print("Configuring proxychains...")
+    with open("/tmp/proxychains.conf", 'a') as file:
         file.write(f"\n{tor_proxy}\n")
-
+    
+    # Copy the temporary config file to the system's proxychains configuration file
+    run_sudo_command(['cp', '/tmp/proxychains.conf', proxychains_conf])
+    
     # Start Tor service
-    run_command(["sudo", "systemctl", "start", "tor"])
+    print("Starting Tor service...")
+    run_sudo_command(["systemctl", "start", "tor"])
 
 def clear_screen():
     """Clear the terminal screen."""
