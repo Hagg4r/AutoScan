@@ -32,7 +32,7 @@ def install_tools():
         print(f"Checking if {tool} is installed...")
         if not is_tool_installed(tool):
             print(f"{tool} not found. Installing {tool}...")
-            stdout, stderr = run_command(install_command.split())
+            stdout, stderr = run_sudo_command(install_command.split())
             if stdout:
                 print(stdout)
             if stderr:
@@ -82,7 +82,7 @@ def main():
     open(output_file, 'w').close()
     
     tools = {
-        "subfinder": ["subfinder", , link, output_file],
+        "subfinder": ["subfinder", "-d", link, "-o", output_file],
         "sqlmap": ["sqlmap", "--url", link],
         "whois": ["whois", link],
         "nikto": ["nikto", "-h", link],
