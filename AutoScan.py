@@ -25,8 +25,7 @@ def install_tools():
         "sqlmap": "sudo apt-get install -y sqlmap",
         "nikto": "sudo apt-get install -y nikto",
         "whois": "sudo apt-get install -y whois",
-        "subfinder": "GO111MODULE=on go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
-        "proxychains": "sudo apt-get install -y proxychains"
+        "subfinder": "GO111MODULE=on go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
     }
     
     for tool, install_command in tools.items():
@@ -44,23 +43,6 @@ def install_tools():
 def is_tool_installed(tool_name):
     """Check if a tool is installed."""
     return subprocess.call(["which", tool_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
-
-def configure_proxychains():
-    """Configure proxychains to use Tor."""
-    proxychains_conf = "/etc/proxychains.conf"
-    tor_proxy = "socks5  127.0.0.1 9050"
-    
-    # Append Tor proxy settings to proxychains configuration
-    print("Configuring proxychains...")
-    with open("/tmp/proxychains.conf", 'a') as file:
-        file.write(f"\n{tor_proxy}\n")
-    
-    # Copy the temporary config file to the system's proxychains configuration file
-    run_sudo_command(['cp', '/tmp/proxychains.conf', proxychains_conf])
-    
-    # Start Tor service
-    print("Starting Tor service...")
-    run_sudo_command(["systemctl", "start", "tor"])
 
 def clear_screen():
     """Clear the terminal screen."""
@@ -81,7 +63,6 @@ def print_header():
 
 def main():
     install_tools()
-    configure_proxychains()
     
     # Clear the screen after installing the tools
     clear_screen()
@@ -101,12 +82,12 @@ def main():
     open(output_file, 'w').close()
     
     tools = {
-        "subfinder": ["proxychains", "subfinder", "-d", link, "-o", output_file],
-        "sqlmap": ["proxychains", "sqlmap", "--url", link],
-        "whois": ["proxychains", "whois", link],
-        "nikto": ["proxychains", "nikto", "-h", link],
-        "uniscan": ["proxychains", "uniscan", "-u", link, "-qd"],
-        "nmap": ["proxychains", "nmap", link],
+        "subfinder": ["subfinder", "-d", link, "-o", output_file],
+        "sqlmap": ["sqlmap", "--url", link],
+        "whois": ["whois", link],
+        "nikto": ["nikto", "-h", link],
+        "uniscan": ["uniscan", "-u", link, "-qd"],
+        "nmap": ["nmap", link],
     }
 
     total_tools = len(tools)
@@ -126,22 +107,19 @@ def main():
 
     # Execute additional SQLMap commands to retrieve database information
     additional_sqlmap_commands = [
-        f"proxychains sqlmap -u {link} --dbs",
-        f"proxychains sqlmap -u {link} -D <nome_del_database> --tables",
-        f"proxychains sqlmap -u {link} -D <nome_del_database> -T <nome_della_tabella> --columns",
-        f"proxychains sqlmap -u {link} -D <nome_del_database> -T <nome_della_tabella> --dump"
+        f"sqlmap -u {link} --dbs",
+        f"sqlmap -u {link} -D <nome_database> --tables",
+        f"sqlmap -u {link} -D <nome_database> -T <nome_tabella> --columns",
+        f"sqlmap -u {link} -D <nome_database> -T <nome_tabella> -C <nome_colonna> --dump"
     ]
     
     for command in additional_sqlmap_commands:
         stdout, stderr = run_command(command.split())
-        save_to_file(output_file, f"=== Risultati {command} ===\n")
+        save_to_file(output_file, f"=== Risultati SQLMap ===\n")
         if stdout:
             save_to_file(output_file, stdout)
         if stderr:
             save_to_file(output_file, f"Errori:\n{stderr}")
-
-    # Add signature at the end of the file
-    save_to_file(output_file, "\nby @Haggar")
 
 if __name__ == "__main__":
     main()
